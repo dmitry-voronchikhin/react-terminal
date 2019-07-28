@@ -6,26 +6,13 @@ import {
 import Pay from './pay'
 import Home from './home'
 
-/*function App() {
+function App() {
   return (
-    <Router>
-      <Switch>
-        <Route exact path="/" component={Home}></Route>
-        <Route exact path="/pay" component={Pay}></Route>
-      </Switch>
-    </Router>
+    <Switch>
+      <Route exact path="/" component={Home}></Route>
+      <Route exact path="/pay" component={Pay}></Route>
+    </Switch>
   );
 }
 
-export default App;*/
-
-export default class App extends React.Component {
-  render() {
-    return (
-      <Switch>
-        <Route exact path="/" component={Home}></Route>
-        <Route strict path="/pay" component={Pay}></Route>
-      </Switch>
-    );
-  }
-}
+export default App;
