@@ -4,45 +4,59 @@ import { Link } from 'react-router-dom';
 
 //  ------ VARIABLES  ---------
 
-const Title = Style.h2``;
 var operators = [
   {
+    id: '1',
     name: 'MTS'
   },
   {
+    id: '2',
     name: 'Megafon'
   },
   {
+    id: '3',
     name: 'Beeline'
+  },
+  {
+    id: '4',
+    name: 'Tele2'
   }
 ]
 
-// -------    CLASS   ----------
+// -------  COMPONENT ---------
 
 export default function Home() {
 
-    return (
-      <Container>
-        <div id="operatorPage">
-          <Title>Онлайн терминал</Title>
-          <p>Выберите оператора для оплаты</p>
-          <List>
-            <ListObject><Link to="/pay" onClick={saveName('MTS')}>МТS</Link></ListObject>
-            <ListObject><Link to="/pay" onClick={saveName('Beeline')}>Beeline</Link></ListObject>
-            <ListObject><Link to="/pay" onClick={saveName('Megafon')}>Megafon</Link></ListObject>
-          </List>
-          <span>Добавить оператора</span>
-        </div>
-      </Container>
+  return (
+    <Container>
+      <div id="operatorPage">
+        <Title>Онлайн терминал</Title>
+        <p>Выберите оператора для оплаты</p>
+        <List>
+          <GetList />
+        </List>
+      </div>
+    </Container>
+  )
+
+}
+
+function GetList() {
+  const list = operators.map((el) => {
+    return(
+    <ListObject key={el.id} onClick={() => saveName(el.name)}><Link to="/pay">{el.name}</Link></ListObject>
     )
+  })
+  return list;
+}
 
-  }
-
-  function saveName(name) {
-    sessionStorage.setItem('operatorName', name)
-  }
+function saveName(name) {
+  sessionStorage.setItem('operatorName', name);
+}
 
 // ----- STYLED COMPONENTS  -----
+
+const Title = Style.h2``;
 
 const ListObject = Style.li`
   cursor: pointer;
