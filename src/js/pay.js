@@ -1,42 +1,67 @@
-import React, { useRef, useState } from 'react';
+import React from 'react';
 import Style from 'styled-components';
-import { Link } from 'react-router-dom';
+import { Redirect, Link } from 'react-router-dom';
 import InputMask from 'react-input-mask';
-import Axios from 'axios'
 
-//  --------- VARIABLES  ----------
+//  ------- VARIABLES --------
 
-// name of operator
-var operatorName = '';
+var operatorName = null;
 
-//    -------   CLASS   --------
+//  -------   COMPONENT   --------
 
 export default function Pay() {
+
+    //var [phoneNumber, setPhoneNumber] = useState();
+    //var [amount, setAmount] = useState();
 
     operatorName = sessionStorage.getItem('operatorName')
 
     return (
       <PayPage>
         <BackToOperator>
-          <Link to="/" onClick={sessionStorage.removeItem('operatorName')}>Вернуться к выбору оператора</Link>
+          <Link to="/" onClick={() => sessionStorage.removeItem('operatorName')}>Вернуться к выбору оператора</Link>
         </BackToOperator>
         <OperatorName>
           <span>Выбранный оператор: {operatorName}</span>
         </OperatorName>
         <PhoneNumber>
-          <InputMask mask="8 (999) 999-99-99" className="form-control" title="Номер телефона" placeholder="Номер телефона"/>
+          <InputMask id="phone" mask="8 (999) 999-99-99" className="form-control" title="Номер телефона" placeholder="Номер телефона"/>
         </PhoneNumber>
         <Amount>
-          <InputMask mask="9999" className="form-control" title="Сумма оплаты (руб)" placeholder="Сумма оплаты (руб)"/>
+          <InputMask id="amount" mask="9999" maskChar="" className="form-control" title="Сумма оплаты (руб)" placeholder="Сумма оплаты (руб)"/>
         </Amount>
-        <Button className="form-control" onClick={postPay}>Оплатить</Button>
+        <Button className="form-control" onClick={checkData}>Оплатить</Button>
       </PayPage>
     );
   };
 
-  function postPay() {
-    
+  function checkData() {
+    var phone = document.getElementById("phone").value;
+    var amount = document.getElementById("amount").value;
+
+    if(operatorName == null) return alert('Невоможно продолжить без выбора оператора!')
+
+    if(phone.match(/^$/)) return alert('Введите номер телефона!');
+    if(!phone.match(/^8 \([0-9][0-9][0-9]\) [0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$/)) return alert('Введите номер телефона полностью!');
+
+    if(amount.match(/^$/)) return alert('Введите сумму!');
+    if(parseFloat(amount) < 1 || parseFloat(amount) > 1000) return alert('Введите сумму от 1 до 1000!');
+
+    if((phone.match(/^8 \(982\) [0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$/) || phone.match(/^8 \(912\) [0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$/)) && operatorName != 'MTS') return alert('Выберите оператора MTS!');
+    if((phone.match(/^8 \(929\) [0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$/) || phone.match(/^8 \(922\) [0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$/)) && operatorName != 'Megafon') return alert('Выберите оператора Megafon!');
+    if((phone.match(/^8 \(909\) [0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$/) || phone.match(/^8 \(963\) [0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$/)) && operatorName != 'Beeline') return alert('Выберите оператора Beeline!');
+    if((phone.match(/^8 \(904\) [0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$/) || phone.match(/^8 \(951\) [0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$/)) && operatorName != 'Tele2') return alert('Выберите оператора Tele2!');
+
+    setTimeout(postPay(), 3000);
   };
+
+  function postPay() {
+      if(Math.random() > 0.5) {
+        alert('Успешно');
+        return (<Redirect to="/"/>)
+      } 
+      return alert('Ошибка оплаты. Повторите снова.');
+  }
 
 //    -------- STYLED COMPONENTS  -------
 
@@ -69,6 +94,7 @@ const Amount = Style.div`
   dispay: flex;
 `;
 
+// for button
 const Button = Style.button`
 
 `;
