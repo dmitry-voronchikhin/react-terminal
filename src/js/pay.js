@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import Style from 'styled-components';
 import { Link } from 'react-router-dom';
 import InputMask from 'react-input-mask';
@@ -8,8 +8,6 @@ import Axios from 'axios'
 
 // name of operator
 var operatorName = '';
-var phoneNumber = '';
-var amount = '';
 
 //    -------   CLASS   --------
 
@@ -26,7 +24,7 @@ export default function Pay() {
           <span>Выбранный оператор: {operatorName}</span>
         </OperatorName>
         <PhoneNumber>
-          <InputMask mask="8(999)999-99-99" className="form-control" title="Номер телефона" placeholder="Номер телефона"/>
+          <InputMask mask="8 (999) 999-99-99" className="form-control" title="Номер телефона" placeholder="Номер телефона"/>
         </PhoneNumber>
         <Amount>
           <InputMask mask="9999" className="form-control" title="Сумма оплаты (руб)" placeholder="Сумма оплаты (руб)"/>
