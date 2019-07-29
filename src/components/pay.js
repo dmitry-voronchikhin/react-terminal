@@ -1,28 +1,29 @@
 import React from 'react';
 import Style from 'styled-components';
-import { Redirect, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import InputMask from 'react-input-mask';
+import {push} from 'react-router-redirect';
+import { delay } from 'q';
 
 //  ------- VARIABLES --------
 
-var operatorName = null;
+var operator = null;
+var codes = null;
 
 //  -------   COMPONENT   --------
 
 export default function Pay() {
 
-    //var [phoneNumber, setPhoneNumber] = useState();
-    //var [amount, setAmount] = useState();
-
-    operatorName = sessionStorage.getItem('operatorName')
+    operator = sessionStorage.getItem('operatorName');
+    codes = (sessionStorage.getItem('codes')).split(',');
 
     return (
       <PayPage>
         <BackToOperator>
-          <Link to="/" onClick={() => sessionStorage.removeItem('operatorName')}>Вернуться к выбору оператора</Link>
+          <Link to="/" onClick={() => resetOperator()}>&larr; Вернуться к выбору оператора</Link>
         </BackToOperator>
         <OperatorName>
-          <span>Выбранный оператор: {operatorName}</span>
+          <span>Выбранный оператор: {operator}</span>
         </OperatorName>
         <PhoneNumber>
           <InputMask id="phone" mask="8 (999) 999-99-99" className="form-control" title="Номер телефона" placeholder="Номер телефона"/>
@@ -30,7 +31,7 @@ export default function Pay() {
         <Amount>
           <InputMask id="amount" mask="9999" maskChar="" className="form-control" title="Сумма оплаты (руб)" placeholder="Сумма оплаты (руб)"/>
         </Amount>
-        <Button className="form-control" onClick={checkData}>Оплатить</Button>
+        <Button className="form-control" onClick={clickButton}>Оплатить</Button>
       </PayPage>
     );
   };
@@ -39,7 +40,7 @@ export default function Pay() {
     var phone = document.getElementById("phone").value;
     var amount = document.getElementById("amount").value;
 
-    if(operatorName == null) return alert('Невоможно продолжить без выбора оператора!')
+    if(operator == null) return alert('Невоможно продолжить без выбора оператора!')
 
     if(phone.match(/^$/)) return alert('Введите номер телефона!');
     if(!phone.match(/^8 \([0-9][0-9][0-9]\) [0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$/)) return alert('Введите номер телефона полностью!');
@@ -47,21 +48,43 @@ export default function Pay() {
     if(amount.match(/^$/)) return alert('Введите сумму!');
     if(parseFloat(amount) < 1 || parseFloat(amount) > 1000) return alert('Введите сумму от 1 до 1000!');
 
-    if((phone.match(/^8 \(982\) [0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$/) || phone.match(/^8 \(912\) [0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$/)) && operatorName != 'MTS') return alert('Выберите оператора MTS!');
-    if((phone.match(/^8 \(929\) [0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$/) || phone.match(/^8 \(922\) [0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$/)) && operatorName != 'Megafon') return alert('Выберите оператора Megafon!');
-    if((phone.match(/^8 \(909\) [0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$/) || phone.match(/^8 \(963\) [0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$/)) && operatorName != 'Beeline') return alert('Выберите оператора Beeline!');
-    if((phone.match(/^8 \(904\) [0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$/) || phone.match(/^8 \(951\) [0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$/)) && operatorName != 'Tele2') return alert('Выберите оператора Tele2!');
-
-    setTimeout(postPay(), 3000);
+    if(!checkOperator(phone)) return alert('Телефонный код не соответствует оператору.\r\nВыберите соответствующего оператора!');
+  
+    return true;
   };
 
   function postPay() {
       if(Math.random() > 0.5) {
         alert('Успешно');
-        return (<Redirect to="/"/>)
+        return true;
       } 
-      return alert('Ошибка оплаты. Повторите снова.');
+      else{
+        alert('Ошибка оплаты. Повторите снова.');
+        return false;
+      }
   }
+
+  function checkOperator(phone) {
+    var flag = false;
+    for(var i = 0; i < codes.length; i++) {
+      if(phone.substring(3,6) === codes[i]) {
+        flag = true;
+        break;  
+      }
+    }
+    return flag;
+  }
+
+   function clickButton() {
+    if(checkData())
+      if(postPay())
+        push('/');
+   }
+
+   function resetOperator() {
+    sessionStorage.removeItem('operatorName')
+    sessionStorage.removeItem('codes')
+   }
 
 //    -------- STYLED COMPONENTS  -------
 

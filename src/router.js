@@ -3,8 +3,8 @@ import {
   Route,
   Switch
 } from 'react-router-dom';
-import Pay from './pay'
-import Home from './home'
+import Pay from './components/pay'
+import Home from './components/home'
 
 function App() {
   return (
