@@ -3,7 +3,6 @@ import Style from 'styled-components';
 import { Link } from 'react-router-dom';
 import InputMask from 'react-input-mask';
 import {push} from 'react-router-redirect';
-import { delay } from 'q';
 
 //  ------- VARIABLES --------
 
